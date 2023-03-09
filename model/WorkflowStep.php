@@ -95,4 +95,27 @@ class WorkflowStep
             return true;
         return false;
     }
+
+    // delete the all steps from the table
+    public function delete_all_steps() {
+        $sql = "
+        DELETE FROM ".$this->table." WHERE 1
+        ";
+        $stmt = $this->conn->prepare($sql);
+        if($stmt->execute()) 
+            return $stmt;
+        return false;
+    }
+
+    // delete the all steps from the table
+    public function delete_single_steps() {
+        $sql = "
+        DELETE FROM ".$this->table." WHERE step_id = :step_id
+        ";
+        $result = $this->conn->prepare($sql);
+        $result->bindParam(":step_id", $this->step_id);
+        if($result->execute()) 
+            return true;
+        return false;
+    }
 }
