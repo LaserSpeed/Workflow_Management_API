@@ -3,6 +3,7 @@ class WorkflowStep
 {
     private $conn;
     private $table = "workflow_step";
+    private $parent_table = "workflow";
 
     public $step_id;
     public $workflow_id;
@@ -54,6 +55,7 @@ class WorkflowStep
         return $stmt;
     }
 
+    // create workflow
     public function create_workflow_step()
     {
         $sql = "
@@ -80,6 +82,17 @@ class WorkflowStep
             return true;
         }
         printf("Error: %s", $stmt->error);
+        return false;
+    }
+
+    // delete all steps as well as the workflow for the steps
+    public function delete_step_and_workflow() {
+        $sql = "
+        DELETE ".$this->table.", ".$this->parent_table." FROM ".$this->table." JOIN ".$this->parent_table." ON ".$this->table.".workflow_id = ".$this->parent_table.".workflow_id;
+        ";
+        $result = $this->conn->prepare($sql);
+        if($result->execute()) 
+            return true;
         return false;
     }
 }

@@ -67,5 +67,25 @@
             printf("Error: %s", $stmt->error);
             return false;
         }
+
+        // delete all workflow
+        public function delete_workflow() {
+            $sql = "
+                DELETE FROM `workflow_step` WHERE 1
+            ";
+            $stmt = $this->conn->prepare($sql);
+            // $stmt->bindParam("workflow_id", $this->workflow_id);
+            if($stmt->execute()) {
+                $sql1 = "
+                DELETE FROM ".$this->table." WHERE 1
+                ";
+                $stmt1 = $this->conn->prepare($sql1);
+                if($stmt1->execute())
+                    return true;
+                
+                return false;
+            }
+            return false;
+        } 
     }
 ?>
