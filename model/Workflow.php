@@ -32,7 +32,7 @@
             //prepare, bind the data and execute
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam('workflow_id', $this->workflow_id);
-            $result = $stmt->execute();
+            $stmt->execute();
 
             // get the row and set the values
             $row = $stmt->fetch(PDO::FETCH_ASSOC);

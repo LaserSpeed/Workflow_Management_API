@@ -18,7 +18,7 @@ class WorkflowStep
         $this->conn = $db;
     }
 
-    // get steps
+    // get all steps
     public function get_workflow_step()
     {
         $sql = "
@@ -30,6 +30,27 @@ class WorkflowStep
 
         // execute and return the stmt
         $stmt->execute();
+        return $stmt;
+    }
+
+    // get single step
+    public function get_single_workflow_step() {
+        $sql = "
+        SELECT w.workflow_name, s.step_name, s.step_order, s.step_type, s.step_handleby FROM ".$this->table." s LEFT JOIN `workflow` w ON s.workflow_id = w.workflow_id WHERE s.step_id = :step_id;
+        ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":step_id", $this->step_id);
+        $stmt->execute();
+
+        // get the row
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if($row) {
+            $this->workflow_name = $row['workflow_name'];
+            $this->step_name = $row['step_name'];
+            $this->step_order = $row['step_order'];
+            $this->step_type = $row['step_type'];
+            $this->step_handleby = $row['step_handleby'];
+        }
         return $stmt;
     }
 
