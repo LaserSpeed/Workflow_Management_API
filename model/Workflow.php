@@ -3,21 +3,45 @@
         private $conn;
         private $table = "workflow";
 
+        public $workflow_id;
         public $workflow_name;
         public $workflow_description;
+        public $created_at;
 
         // constructor to connect with databse
         public function __construct($db) {
             $this->conn = $db;
         }
 
-        // get workflow
+        // get all workflow
         public function get_workflow() {
             $sql = "
                 SELECT * FROM ".$this->table."
             ";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
+            return $stmt;
+        }
+
+        // get single workflow
+        public function get_single_workflow() {
+            $sql = "
+                SELECT * FROM ".$this->table." WHERE workflow_id = :workflow_id
+            ";
+            
+            //prepare, bind the data and execute
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam('workflow_id', $this->workflow_id);
+            $result = $stmt->execute();
+
+            // get the row and set the values
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($row) {
+                $this->workflow_name = $row['workflow_name'];
+                $this->workflow_description = $row['workflow_description'];
+                $this->created_at = $row['created_at'];
+            }
+
             return $stmt;
         }
 
