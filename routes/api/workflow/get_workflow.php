@@ -4,8 +4,8 @@
     header('Content-Type: application/json');
 
     // include external script
-    include_once "../../config/Database.php";
-    include_once "../../model/Workflow.php";
+    include_once "../../../config/Database.php";
+    include_once "../../../model/Workflow.php";
 
     // create instance of the Database class
     $database = new Database();

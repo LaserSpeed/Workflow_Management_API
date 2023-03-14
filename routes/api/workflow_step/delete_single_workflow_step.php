@@ -6,8 +6,8 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
 // include external script
-include_once "../../config/Database.php";
-include_once "../../model/WorkflowStep.php";
+include_once "../../../config/Database.php";
+include_once "../../../model/WorkflowStep.php";
 
 $database = new Database();
 $db = $database->connect();

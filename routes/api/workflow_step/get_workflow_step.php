@@ -4,8 +4,8 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // include external script
-include_once "../../config/Database.php";
-include_once "../../model/WorkflowStep.php";
+include_once "../../../config/Database.php";
+include_once "../../../model/WorkflowStep.php";
 
 $database = new Database();
 $db = $database->connect();
@@ -33,6 +33,6 @@ if($no_of_records > 0) {
     echo json_encode($step_array);
 } else {
     echo json_encode(
-        array("Message", "No workflow found")
+        array("Message" => "No workflow found")
     );
 }

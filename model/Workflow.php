@@ -1,4 +1,5 @@
 <?php 
+    // User model
     class Workflow {
         private $conn;
         private $table = "workflow";
@@ -8,6 +9,7 @@
         public $workflow_description;
         public $created_at;
 
+        // Controller 
         // constructor to connect with databse
         public function __construct($db) {
             $this->conn = $db;
