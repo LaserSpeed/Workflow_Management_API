@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>API Example</h1>
+    <label for="id">ID:</label>
+    <input type="text" id="id" name="id" />
+    <button onclick="fetchData()">Fetch Data</button>
+    <div id="result"></div>
+
+    <script>
+      function fetchData() {
+        const id = document.getElementById("id").value;
+        const url = `http://localhost/workflow_management_system/routes/api/workflow/get_single_workflow.php?id=${id}`;
+
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            const result = document.getElementById("result");
+            if(data.workflow_id === undefined) {
+                result.innerHTML = `<p>No workflow found</p>`;
+            }
+            else {
+                result.innerHTML = `
+                    <p>ID: ${data.workflow_id}</p>
+                    <p>Name: ${data.workflow_name}</p>
+                    <p>Email: ${data.workflow_description}</p>
+                `;
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    </script>
+  </body>
+</html>

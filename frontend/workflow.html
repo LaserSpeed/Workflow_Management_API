@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+</head>
+<body>
+    <h2>Get all the workflow</h2>
+    <button class="sent_req">Send Request</button>
+    <div id="result"></div>
+
+    <script>
+        //script for getting all the workflow
+        const btn = document.querySelector(".sent_req");
+        btn.addEventListener('click', getWorkflow);
+
+        function getWorkflow() {
+            // API endpoint URL
+            const url = 'http://localhost/workflow_management_system/routes/api/workflow/get_workflow.php';
+            
+            // Send API request
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+
+
+                // const html = data.map(item => `
+                // <ul><li>id: ${item.workflow_id}</li>
+                //     <li>name: ${item.workflow_title}</li>
+                //     <li>description: ${item.workflow_description}</li>
+                // </ul>
+                // `).join('');
+                // // Handle API response
+                // document.getElementById('result').innerHTML = html;
+                if(data.Message) {
+                    document.getElementById('result').innerHTML = data.Message;
+                }
+                else {
+                    let output = '';
+                    for(i in data) {
+                        output += `
+                        <ul>
+                            <li>Id: ${data[i].workflow_id}</li>
+                            <li>Name: ${data[i].workflow_title}</li>
+                            <li>Description: ${data[i].workflow_description}</li>
+                            <li>Created at: ${data[i].created_at}</li>
+                        </ul>
+                        `;
+                    }
+                    document.getElementById('result').innerHTML = output;
+                }
+
+
+            })
+            .catch(error => {
+                // Handle API error
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
