@@ -88,7 +88,7 @@ class WorkflowStep
     // delete all steps as well as the workflow for the steps
     public function delete_step_and_workflow() {
         $sql = "
-        DELETE ".$this->table.", ".$this->parent_table." FROM ".$this->table." JOIN ".$this->parent_table." ON ".$this->table.".workflow_id = ".$this->parent_table.".workflow_id;
+        DELETE ".$this->table.".*, ".$this->parent_table.".* FROM ".$this->table." JOIN ".$this->parent_table." ON ".$this->table.".workflow_id = ".$this->parent_table.".workflow_id;
         ";
         $result = $this->conn->prepare($sql);
         if($result->execute()) 
