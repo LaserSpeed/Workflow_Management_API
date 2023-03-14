@@ -23,7 +23,7 @@ class WorkflowStep
     public function get_workflow_step()
     {
         $sql = "
-        SELECT s.step_id, w.workflow_name, s.step_order, s.step_name, s.step_type, s.step_handleby FROM ".$this->table." s LEFT JOIN workflow w ON s.workflow_id = w.workflow_id;
+        SELECT s.step_id, s.workflow_id, w.workflow_name, s.step_order, s.step_name, s.step_type, s.step_handleby FROM ".$this->table." s LEFT JOIN workflow w ON s.workflow_id = w.workflow_id ORDER BY s.workflow_id ASC, s.step_order ASC;
         ";
 
         // prepare the sql
@@ -117,5 +117,53 @@ class WorkflowStep
         if($result->execute()) 
             return true;
         return false;
+    }
+
+    // delete single step
+    public function delete_single_step() {
+        $select_sql = "
+            SELECT * FROM ".$this->table." WHERE step_id = :step_id
+        ";
+
+        $select_stmt = $this->conn->prepare($select_sql);
+        $select_stmt->bindParam("step_id", $this->step_id);
+        if($select_stmt->execute()) {
+            while($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+                extract($row);
+                $this->workflow_id = $row['workflow_id'];
+                $this->step_order = $row['step_order'];
+
+                // delete the steps
+                $delete_sql = "
+                    DELETE FROM ".$this->table." WHERE workflow_id = :workflow_id AND step_id = :step_id;
+                ";
+                $delete_stmt = $this->conn->prepare($delete_sql);
+                $delete_stmt->bindParam("workflow_id", $this->workflow_id);
+                $delete_stmt->bindParam("step_id", $this->step_id);
+                
+                if($delete_stmt->execute()) {
+                    // update the steps after deleted
+                    $update_sql = "
+                    UPDATE ".$this->table." SET `step_order` = `step_order` - 1 WHERE workflow_id = :workflow_id AND step_order > :step_order
+                    ";
+                    // UPDATE `workflow_step` SET `step_order`= 3 - 1 WHERE `step_id` = "19";
+                    $update_stmt = $this->conn->prepare($update_sql);
+                    $update_stmt->bindParam("workflow_id", $this->workflow_id);
+                    $update_stmt->bindParam("step_order", $this->step_order);
+                    if($update_stmt->execute()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
     }
 }

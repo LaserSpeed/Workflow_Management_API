@@ -13,11 +13,11 @@ $database = new Database();
 $db = $database->connect();
 
 $workflowSteps = new WorkflowStep($db);
-$this->step_id = isset($_GET['id']) ? $_GET['id'] : die();
-$result = $workflowSteps->delete_all_steps();
+$workflowSteps->step_id = isset($_GET['id']) ? $_GET['id'] : die();
+$result = $workflowSteps->delete_single_step();
 if($result) {
     echo json_encode(
-        array("message" => "All steps are deleted")
+        array("message" => "Step is deleted")
     );
 }
 else {
