@@ -55,7 +55,7 @@ class WorkflowStep
         return $stmt;
     }
 
-    // create workflow
+    // create workflow step
     public function create_workflow_step()
     {
         $sql = "
@@ -107,16 +107,50 @@ class WorkflowStep
         return false;
     }
 
-    // delete the all steps from the table
-    public function delete_single_steps() {
-        $sql = "
-        DELETE FROM ".$this->table." WHERE step_id = :step_id
+    // add a steps
+    public function add_step() {
+        // method
+        // 1. Retrieve the existing steps for the selected workflow from the database and store them in an array.
+        // 2. Determine the position where the new step needs to be added based on the user input. Let's say the new step needs to be added after step 2.
+        // 3. Loop through the existing steps array and update the step_order values for the steps that come after the new step position. In our example, we would update the step_order for steps 3 and onwards.
+        // 4. Insert the new step into the database with the updated step_order value.
+        
+        $select_sql = "
+            SELECT * FROM ".$this->table." WHERE workflow_id = :workflow_id
         ";
-        $result = $this->conn->prepare($sql);
-        $result->bindParam(":step_id", $this->step_id);
-        if($result->execute()) 
-            return true;
-        return false;
+        $stmt = $this->conn->prepare($select_sql);
+        $stmt->bindParam("workflow_id", $this->workflow_id);
+        if($stmt->execute()) {
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $steps[] = $row;
+            }
+        }
+
+        // determining the position
+        $position = $this->step_order;
+
+        // update the steps that comes after the new step
+        foreach($steps as $step) {
+            if($step['step_order'] >= $position) {
+                $stepID = $step['step_id'];
+                $new_step_order = $step['step_order'] + 1;
+                $update_sql = "
+                    UPDATE ".$this->table." SET step_order = :step_order where step_id = :step_id;
+                ";
+                $stmt = $this->conn->prepare($update_sql);
+                $stmt->bindParam("step_order", $new_step_order);
+                $stmt->bindParam("step_id", $stepID);
+                if($stmt->execute()) {
+                    continue;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        
+        $status = $this->create_workflow_step();
+        return $status;
     }
 
     // delete single step
